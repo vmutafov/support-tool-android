@@ -6,6 +6,11 @@ import com.azbouki.supporttool.sdk.SupportTool
 class MainApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        SupportTool.init(applicationContext = this, supportToolKey = "N30ahj0Yvo967gL5wHkT")
+//        SupportTool.init(applicationContext = this, supportToolKey = "N30ahj0Yvo967gL5wHkT")
+        SupportTool.init(
+            supportToolKey = "N30ahj0Yvo967gL5wHkT",
+            appId = "N30ahj0Yvo967gL5wHkT",
+            this
+        )
     }
 }

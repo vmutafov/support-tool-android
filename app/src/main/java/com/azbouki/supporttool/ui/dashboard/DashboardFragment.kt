@@ -8,6 +8,8 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.azbouki.supporttool.databinding.FragmentDashboardBinding
+import okhttp3.*
+import java.io.IOException
 
 class DashboardFragment : Fragment() {
 
@@ -32,6 +34,19 @@ class DashboardFragment : Fragment() {
         dashboardViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }
+
+        val req = Request.Builder().url("https://www.google.com").get().build()
+        OkHttpClient().newCall(req).enqueue(object: Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                println("fail")
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                println("response")
+            }
+
+        })
+
         return root
     }
 

@@ -28,7 +28,7 @@
 
         <service
             android:enabled="true"
-            android:name=".sdk.video.projection.ScreenCapturerService"
+            android:name=".sdk.recording.video.ScreenCapturerService"
             android:foregroundServiceType="mediaProjection">
         </service>
     </application>

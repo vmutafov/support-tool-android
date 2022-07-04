@@ -41,5 +41,5 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
     // sentry
-    implementation 'io.sentry:sentry-android:5.7.0'
+    compileOnly 'io.sentry:sentry-android:6.1.4'
 }

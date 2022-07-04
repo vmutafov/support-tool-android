@@ -1,7 +1,7 @@
-package com.azbouki.supporttool.sdk.live.twilio
+package com.azbouki.supporttool.sdk.recording.live.twilio
 
 import android.widget.Toast
-import com.azbouki.supporttool.sdk.SdkState
+import com.azbouki.supporttool.sdk.state.SupportToolState
 import com.twilio.video.RemoteParticipant
 import com.twilio.video.Room
 import com.twilio.video.TwilioException
@@ -49,6 +49,6 @@ class SupportCallRoomListener(private val onSupportMessage: (String) -> Unit) : 
     }
 
     private fun showShortToast(message: String) {
-        Toast.makeText(SdkState.currentActivity, message, Toast.LENGTH_SHORT).show()
+        Toast.makeText(SupportToolState.currentActivity, message, Toast.LENGTH_SHORT).show()
     }
 }

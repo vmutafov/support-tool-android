@@ -1,4 +1,4 @@
-package com.azbouki.supporttool.sdk.sentry.integration
+package com.azbouki.supporttool.sdk.recording.sentry.integration
 
 import com.azbouki.supporttool.sdk.instumentations.LogInstrumentation
 import io.sentry.IHub
@@ -7,8 +7,8 @@ import io.sentry.SentryLevel
 import io.sentry.SentryOptions
 
 class LogIntegration(
-    val minEventLevel: SentryLevel = SentryLevel.ERROR,
-    val minBreadcrumbLevel: SentryLevel = SentryLevel.INFO
+    private val minEventLevel: SentryLevel = SentryLevel.ERROR,
+    private val minBreadcrumbLevel: SentryLevel = SentryLevel.INFO
 ) : Integration {
 
     override fun register(hub: IHub, options: SentryOptions) {

@@ -1,4 +1,4 @@
-package com.azbouki.supporttool.sdk.video.projection
+package com.azbouki.supporttool.sdk.recording.video
 
 import android.annotation.TargetApi
 import android.app.Notification

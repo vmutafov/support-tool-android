@@ -1,10 +1,8 @@
-package com.azbouki.supporttool.sdk.live.controller
+package com.azbouki.supporttool.sdk.recording.live.controller
 
 import android.app.Activity
-import android.util.Log
 import android.view.View
 import android.widget.Button
-import com.azbouki.supporttool.sdk.SdkState
 import com.faendir.rhino_android.RhinoAndroidHelper
 import org.mozilla.javascript.Context
 import org.mozilla.javascript.Scriptable

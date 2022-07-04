@@ -1,4 +1,4 @@
-package com.azbouki.supporttool.sdk.video.projection
+package com.azbouki.supporttool.sdk.recording.video
 
 import android.app.Activity
 import android.content.Context
@@ -7,12 +7,17 @@ import android.hardware.display.DisplayManager
 import android.media.MediaRecorder
 import android.media.projection.MediaProjectionManager
 import android.os.Build
+import android.os.ParcelFileDescriptor
 import androidx.activity.result.ActivityResult
 import androidx.window.layout.WindowMetricsCalculator
-import com.azbouki.supporttool.sdk.SdkState
+import com.azbouki.supporttool.sdk.state.SupportToolState
 import java.io.File
+import java.io.FileDescriptor
+import java.util.UUID
 
 class ScreenRecorder private constructor(private var screenCapturerManager: ScreenCapturerManager?) {
+    
+    private lateinit var currentVideoFile: File
 
     companion object {
         fun create(context: Context): ScreenRecorder {
@@ -27,14 +32,14 @@ class ScreenRecorder private constructor(private var screenCapturerManager: Scre
     fun start(onStarted: () -> Unit) {
         screenCapturerManager?.startForeground()
 
-        SdkState.withScreenCapturingPermission { mediaProjectionManager, recordingLauncherResult ->
+        SupportToolState.screenRecordingState.withScreenCapturingPermission { mediaProjectionManager, recordingLauncherResult ->
             val outputDir =
-                File("${SdkState.currentActivity!!.filesDir.absolutePath}/asd22").apply { mkdirs() }
-            val outputFile = File(outputDir, "test.mp4")
+                File("${SupportToolState.currentActivity!!.filesDir.absolutePath}/support-tool-videos").apply { mkdirs() }
+            currentVideoFile = File(outputDir, UUID.randomUUID().toString())
             startScreenCapturing(
                 mediaProjectionManager,
                 recordingLauncherResult,
-                outputFile
+                currentVideoFile
             )
 
             onStarted()
@@ -46,7 +51,7 @@ class ScreenRecorder private constructor(private var screenCapturerManager: Scre
         recordingLauncherResult: ActivityResult,
         outputFile: File
     ) {
-        val currentActivity = SdkState.currentActivity!!
+        val currentActivity = SupportToolState.currentActivity!!
         val screenBounds = getScreenBounds(currentActivity)
         val density = currentActivity.resources.configuration.densityDpi
 
@@ -111,7 +116,8 @@ class ScreenRecorder private constructor(private var screenCapturerManager: Scre
         }
     }
 
-    fun stop() {
+    fun stop(): File {
         screenCapturerManager?.stopForeground()
+        return currentVideoFile
     }
 }

@@ -1,9 +1,7 @@
-package com.azbouki.supporttool.sdk.sentry.integration
+package com.azbouki.supporttool.sdk.recording.sentry.integration
 
 import android.app.Activity
-import android.app.Application
 import android.os.Build
-import android.os.Bundle
 import android.view.View
 import android.widget.EditText
 import androidx.core.view.allViews
@@ -12,7 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentManager.FragmentLifecycleCallbacks
-import com.azbouki.supporttool.sdk.SdkState
+import com.azbouki.supporttool.sdk.state.SupportToolState
 import com.azbouki.supporttool.sdk.utils.getResourceId
 import io.reactivex.rxjava3.disposables.Disposable
 import io.sentry.Breadcrumb
@@ -27,7 +25,7 @@ class TextIntegration() : Integration, Closeable {
     private var subscription: Disposable? = null
 
     override fun register(hub: IHub, options: SentryOptions) {
-        subscription = SdkState.createdActivitiesFlow.subscribe { activity ->
+        subscription = SupportToolState.createdActivitiesFlow.subscribe { activity ->
             if (activity is FragmentActivity) {
                 instrumentFragmentViews(activity, hub)
             } else {

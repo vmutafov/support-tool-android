@@ -1,14 +1,14 @@
-package com.azbouki.supporttool.sdk.live
+package com.azbouki.supporttool.sdk.recording.live
 
 import android.app.Activity
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
-import com.azbouki.supporttool.sdk.SdkState
-import com.azbouki.supporttool.sdk.live.controller.CodeSnippetResponse
-import com.azbouki.supporttool.sdk.live.controller.JSExecutor
-import com.azbouki.supporttool.sdk.live.controller.MetricsResponse
-import com.azbouki.supporttool.sdk.live.twilio.SupportCallRoomListener
-import com.azbouki.supporttool.sdk.live.twilio.TwilioTokenService
+import com.azbouki.supporttool.sdk.state.SupportToolState
+import com.azbouki.supporttool.sdk.recording.live.controller.CodeSnippetResponse
+import com.azbouki.supporttool.sdk.recording.live.controller.JSExecutor
+import com.azbouki.supporttool.sdk.recording.live.controller.MetricsResponse
+import com.azbouki.supporttool.sdk.recording.live.twilio.SupportCallRoomListener
+import com.azbouki.supporttool.sdk.recording.live.twilio.TwilioTokenService
 import com.google.gson.GsonBuilder
 import com.twilio.video.*
 import io.reactivex.rxjava3.disposables.Disposable
@@ -48,29 +48,29 @@ class DebugSessionCreator {
                 .build()
 
             val supportCallRoomListener =
-                SupportCallRoomListener(SdkState.callState::registerRawRequest)
+                SupportCallRoomListener(SupportToolState.callState::registerRawRequest)
 
             Video.connect(activity, connectOptions, supportCallRoomListener)
             val jsExecutor = JSExecutor(activity)
 
             codeSnippetRequestsSubscription =
-                SdkState.callState.onCodeSnippetRequest.subscribe { codeSnippetRequest ->
+                SupportToolState.callState.onCodeSnippetRequest.subscribe { codeSnippetRequest ->
                     val executionResult = jsExecutor.executeJSCode(codeSnippetRequest.code)
                     val codeSnippetResponse = CodeSnippetResponse(
                         codeSnippetRequest.requestId,
                         executionResult.hasError,
                         executionResult.result
                     )
-                    SdkState.callState.onCodeSnippetResponse.onNext(codeSnippetResponse)
+                    SupportToolState.callState.onCodeSnippetResponse.onNext(codeSnippetResponse)
                 }
 
             metricsRequestsSubscription =
-                SdkState.callState.onMetricsRequest.subscribe { metricsRequest ->
+                SupportToolState.callState.onMetricsRequest.subscribe { metricsRequest ->
                     val metricsResponse = MetricsResponse(metricsRequest.requestId, "test")
-                    SdkState.callState.onMetricsResponse.onNext(metricsResponse)
+                    SupportToolState.callState.onMetricsResponse.onNext(metricsResponse)
                 }
 
-            eventDataSubscription = SdkState.callState.onEventData.subscribe { eventData ->
+            eventDataSubscription = SupportToolState.callState.onEventData.subscribe { eventData ->
                 val serializedEventData = gson.toJson(eventData)
                 dataTrack?.send(serializedEventData)
             }

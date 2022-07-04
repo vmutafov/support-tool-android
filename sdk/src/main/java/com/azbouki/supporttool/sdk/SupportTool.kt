@@ -1,54 +1,59 @@
 package com.azbouki.supporttool.sdk
 
 import android.app.Application
-import com.azbouki.supporttool.sdk.live.LiveScreenRecorder
-import com.azbouki.supporttool.sdk.sentry.SentryInitFacade
+import com.azbouki.supporttool.sdk.recording.live.LiveScreenRecorder
+import com.azbouki.supporttool.sdk.recording.sentry.SentryEventsRecorder
+import com.azbouki.supporttool.sdk.recording.video.ScreenRecorder
+import com.azbouki.supporttool.sdk.state.SupportToolState
 import com.azbouki.supporttool.sdk.utils.OnActivityCreatedLifecycleCallback
-import com.azbouki.supporttool.sdk.video.projection.ScreenRecorder
-import io.sentry.Sentry
-
 
 object SupportTool {
 
-    private var liveScreenRecorder: LiveScreenRecorder? = null
-    private var screenRecorder: ScreenRecorder? = null
+    private lateinit var sentryRecorder: SentryEventsRecorder
+    private lateinit var screenRecorder: ScreenRecorder
+    private lateinit var liveScreenRecorder: LiveScreenRecorder
 
-    fun init(applicationContext: Application, supportToolKey: String) {
-        applicationContext.registerActivityLifecycleCallbacks(
+    fun init(
+        supportToolKey: String,
+        appId: String,
+        application: Application,
+        configuration: SupportToolConfiguration = SupportToolConfiguration.createTrackingEverything()
+    ) {
+        application.registerActivityLifecycleCallbacks(
             OnActivityCreatedLifecycleCallback { activity, bundle ->
-                SdkState.createdActivitiesFlow.onNext(activity)
+                SupportToolState.createdActivitiesFlow.onNext(activity)
             }
         )
-
-        SentryInitFacade.init(applicationContext)
-        screenRecorder = ScreenRecorder.create(applicationContext)
-        liveScreenRecorder = LiveScreenRecorder.create(applicationContext)
+        liveScreenRecorder = LiveScreenRecorder.create(application)
+        screenRecorder = ScreenRecorder.create(application)
+        sentryRecorder = SentryEventsRecorder.create(application)
     }
 
-    fun start() {
-        val startSessionCallback = {
-            SdkState.isRecording = true
-            Sentry.startSession()
-            Sentry.clearBreadcrumbs()
-            Sentry.addBreadcrumb("=== Start Session ===")
-        }
-
-        if (SdkState.isInTwilioMode) {
-            liveScreenRecorder!!.start(startSessionCallback)
-        } else {
-            screenRecorder!!.start(startSessionCallback)
-        }
+    fun startSession() {
+        SupportToolState.isRecording = true
+        screenRecorder.start(sentryRecorder::start)
     }
 
+    fun stopSession() {
+        screenRecorder.stop()
+        sentryRecorder.stop()
+        SupportToolState.isRecording = false
+    }
 
+    fun startLiveSession() {
+        SupportToolState.isRecording = true
+        liveScreenRecorder.start(sentryRecorder::start)
+    }
 
-    fun stop() {
-        Sentry.addBreadcrumb("=== End Session ===")
-        Sentry.captureMessage("SESSION_RECORDED")
-        Sentry.endSession()
-        liveScreenRecorder?.stop()
-        screenRecorder?.stop()
-        SdkState.isRecording = false
+    fun stopLiveSession() {
+        liveScreenRecorder.stop()
+        sentryRecorder.stop()
+        SupportToolState.isRecording = false
     }
 
 }
+
+class VideoRecordingOptions
+class UserInteractionRecordingOptions
+class ApplicationLogsRecordingOptions
+class NetworkRequestsRecordingOptions

@@ -1,4 +1,4 @@
-package com.azbouki.supporttool.sdk.live.controller
+package com.azbouki.supporttool.sdk.recording.live.controller
 
 import com.google.gson.*
 import io.sentry.Breadcrumb

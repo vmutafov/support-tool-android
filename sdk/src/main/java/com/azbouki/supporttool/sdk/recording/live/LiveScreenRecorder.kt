@@ -1,9 +1,9 @@
-package com.azbouki.supporttool.sdk.live
+package com.azbouki.supporttool.sdk.recording.live
 
 import android.content.Context
 import android.os.Build
-import com.azbouki.supporttool.sdk.SdkState
-import com.azbouki.supporttool.sdk.video.projection.ScreenCapturerManager
+import com.azbouki.supporttool.sdk.state.SupportToolState
+import com.azbouki.supporttool.sdk.recording.video.ScreenCapturerManager
 
 class LiveScreenRecorder private constructor(private var screenCapturerManager: ScreenCapturerManager?) {
 
@@ -22,13 +22,13 @@ class LiveScreenRecorder private constructor(private var screenCapturerManager: 
     fun start(onStarted: () -> Unit) {
         screenCapturerManager?.startForeground()
 
-        SdkState.withScreenCapturingPermission { mediaProjectionManager, recordingLauncherResult ->
+        SupportToolState.screenRecordingState.withScreenCapturingPermission { mediaProjectionManager, recordingLauncherResult ->
             debugSessionCreator = DebugSessionCreator().also {
-                val currentActivity = SdkState.currentActivity!!
+                val currentActivity = SupportToolState.currentActivity!!
                 it.connectToSupport(
                     currentActivity,
                     recordingLauncherResult,
-                    SdkState.twilioRoomName
+                    SupportToolState.callState.twilioRoomName
                 )
             }
 

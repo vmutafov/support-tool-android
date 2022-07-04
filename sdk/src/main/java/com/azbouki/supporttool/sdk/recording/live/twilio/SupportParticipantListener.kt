@@ -1,7 +1,7 @@
-package com.azbouki.supporttool.sdk.live.twilio
+package com.azbouki.supporttool.sdk.recording.live.twilio
 
 import android.widget.Toast
-import com.azbouki.supporttool.sdk.SdkState
+import com.azbouki.supporttool.sdk.state.SupportToolState
 import com.twilio.video.*
 import java.nio.ByteBuffer
 
@@ -154,7 +154,7 @@ class SupportParticipantListener(onSupportMessage: (String) -> Unit) :
     }
 
     private fun showShortToast(message: String) {
-        Toast.makeText(SdkState.currentActivity, message, Toast.LENGTH_SHORT).show()
+        Toast.makeText(SupportToolState.currentActivity, message, Toast.LENGTH_SHORT).show()
     }
 }
 
